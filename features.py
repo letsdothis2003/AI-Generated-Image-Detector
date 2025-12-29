@@ -1,5 +1,4 @@
 #Fahim Tanvir and Ahmed Ali
-#CSCI-367 Term Project
 #For feature extraction for HOG
 import numpy as np
 from skimage.feature import hog
@@ -72,3 +71,4 @@ def extract_features(images, use_extra_stats=True):
         return np.concatenate([hog_feats, stats_feats], axis=1)
     else:
         return hog_feats
+
