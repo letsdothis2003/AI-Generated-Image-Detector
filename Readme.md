@@ -59,5 +59,5 @@ You know how Ai for some reason gives people extra fingers or weird skin texture
 
 ### Objectives
 - Use a non-Ai picture to assess an Ai generated one. 
--Detects if it looks weird or uncanny. 
+- Detects if it looks weird or uncanny. 
 
