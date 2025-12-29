@@ -1,5 +1,4 @@
 #Fahim Tanvir and Ahmed Ali
-#CSCI-367 Term Project
 #For our SVM implementation
 
 
@@ -28,3 +27,4 @@ class MnistSvmModel:
     def evaluate(self, X, y):
         preds = self.predict(X)
         return np.mean(preds == y)
+
