@@ -1,5 +1,4 @@
 #Fahim Tanvir and Ahmed Ali
-#CSCI-367 Term Project
 #Please check the directory portion below 
 
 import struct
