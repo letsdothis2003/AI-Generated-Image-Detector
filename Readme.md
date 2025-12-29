@@ -6,15 +6,16 @@ other security issues regarding ai-generated content. Me and my friedn Ahmed Ali
 ## 📌 Overview
 
 This project explores how machine learning models learn to interpret images. The goal is to build a system that can detect and classify different types of visual data.
+So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine).
 
 ---
 
 
 
 
-## 🚀 Phase 1 — MNIST Digit Recognition
+##  Phase 1 — MNIST Digit Recognition
 
-The first phase uses MNIST dataset, a classic benchmark of  handwritten digits (0–9).
+The first phase uses MNIST dataset, a classic benchmark of  handwritten digits (0–9). We used this dataset: https://www.kaggle.com/datasets/hojjatk/mnist-dataset/data
 
 ### Objectives
 - Preprocess and normalize image data  
@@ -27,7 +28,7 @@ The first phase uses MNIST dataset, a classic benchmark of  handwritten digits (
 
 ---
 
-## 🔮 Phase 2 — Face Detection (In Progress)
+##  Phase 2 — Face Detection (In Progress)
 
 The next phase expands the project into peoples faces(we are considering animals as well), which introduces more complexity such as higher-resolution images, lighting variation, and facial feature differences.
 
@@ -39,11 +40,12 @@ The next phase expands the project into peoples faces(we are considering animals
 
 
 
-## 🔮 Phase 3 — Uncaniness Assessment(Future)
+##  Phase 3 — Uncaniness Assessment(Future)
 
 You know how Ai for some reason gives people extra fingers or weird skin textures, this is just that.
 
+
 ### Planned Features
 - Use a non-Ai picture to assess an Ai generated one. 
-
+-Detects if it looks weird or uncanny. 
 
