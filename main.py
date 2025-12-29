@@ -1,5 +1,4 @@
 #Fahim Tanvir and Ahmed Ali
-#CSCI-367 Term Project
 # Please make sure all dependencies are available using this:
 #pip install scikit-image
 #pip install seaborn
@@ -120,3 +119,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
