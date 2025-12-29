@@ -1,6 +1,4 @@
 #Fahim Tanvir and Ahmed Ali
-#CSCI-367 Term Project
-
 ##** This is to evaluate our accuracy and generate confusion matrix
 ###**
 import numpy as np
@@ -82,3 +80,4 @@ def plot_confusion_matrix(cm, class_names=None, normalize=False, title="Confusio
         plt.savefig(save_path, dpi=150)
         print(f"Saved confusion matrix to {save_path}")
     plt.close()
+
