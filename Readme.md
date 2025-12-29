@@ -44,7 +44,7 @@ This next phase repeats phase 1's directives, just with letters. We are currentl
 
 The next phase expands the project into peoples faces(we are considering animals as well), which introduces more complexity such as higher-resolution images, lighting variation, and facial feature differences.
 
-### Planned Features
+### Objectives
 - Detect faces in static images  
 - Explore real-time detection via webcam  
 - Compare different model architectures  
@@ -57,7 +57,7 @@ The next phase expands the project into peoples faces(we are considering animals
 You know how Ai for some reason gives people extra fingers or weird skin textures, this is just that.
 
 
-### Planned Features
+### Objectives
 - Use a non-Ai picture to assess an Ai generated one. 
 -Detects if it looks weird or uncanny. 
 
