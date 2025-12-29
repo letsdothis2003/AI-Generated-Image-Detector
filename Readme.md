@@ -1,7 +1,9 @@
 # Haven't thought of a creative name for this yet! 
 
+Developers: Fahim Tanvir and Ahmed Ali
+
 During covid, I got interested into deepfakes or images manipulated by artificial intelligence as they looked uncanny. Around fall of 2025, this interest got further developed as I learned more about digital image processing and also
-other security issues regarding ai-generated content. Me and my friedn Ahmed Ali have been creating a system to detect such stuff. 
+other security issues regarding ai-generated content.
 
 ## Overview
 
