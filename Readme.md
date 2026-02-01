@@ -11,13 +11,22 @@ This project explores how machine learning models learn to interpret images. The
 So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine).
 
 ---
+##  Phase 1 — Face Detection  
+
+### Objectives
+- Detect faces in static images  
+- Explore real-time detection via webcam  
+- Compare different model architectures  
+- Build a unified interface supporting both digit and face detection
+-You know how Ai for some reason gives weird skin textures cause it can't create realistic lighting or skin, this is just that.
 
 
 
+## FUTURE PLANS 
+## — Digit and letter Recognition(In Progress)
 
-##  Phase 1 — MNIST Digit Recognition
 
-The first phase uses MNIST dataset, a classic benchmark of  handwritten digits (0–9). We used this dataset: https://www.kaggle.com/datasets/hojjatk/mnist-dataset/data
+Using an MNIST dataset, we would like to combat Google's ai for generating handwriting. 
 
 ### Objectives
 - Preprocess and normalize image data  
@@ -25,38 +34,9 @@ The first phase uses MNIST dataset, a classic benchmark of  handwritten digits (
 - Evaluate accuracy and performance until its like 90-ish percent. 
 
 
-### Results
-96 percent accuracy baby! 
-
----
-
-##  Phase 2 — Letter Recognition(In Progress)
-
-This next phase repeats phase 1's directives, just with letters. We are currently are trying to find a good dataset for letters and other characters. 
-
-
-### Objectives(EXACTLY AS PHASE ONE) 
-- Preprocess and normalize image data 
-- Train a neural network to classify digits  
-- Evaluate accuracy and performance until its like 90-ish percent.
-
   
 
-##  Phase 3 — Face Detection (Future)
 
-The next phase expands the project into peoples faces(we are considering animals as well), which introduces more complexity such as higher-resolution images, lighting variation, and facial feature differences.
-
-### Objectives
-- Detect faces in static images  
-- Explore real-time detection via webcam  
-- Compare different model architectures  
-- Build a unified interface supporting both digit and face detection
-
-
-
-##  Phase 4 — Uncaniness Assessment(Future)
-
-You know how Ai for some reason gives people extra fingers or weird skin textures, this is just that.
 
 
 ### Objectives
