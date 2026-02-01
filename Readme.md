@@ -20,7 +20,7 @@ So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Com
 
 
 ## FUTURE PLANS 
-## — Digit and letter Recognition(In Progress)
+## Digit and letter Recognition
 
 
 Using an MNIST dataset, we would like to combat Google's ai for generating handwriting. 
