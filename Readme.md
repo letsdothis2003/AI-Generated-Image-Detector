@@ -10,9 +10,6 @@ other security issues regarding ai-generated content.
 This project explores how machine learning models learn to interpret images. The goal is to build a system that can detect and classify different types of visual data.
 So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine).
 
----
-##  Phase 1 — Face Detection  
-
 ### Objectives
 - Detect faces in static images  
 - Explore real-time detection via webcam  
