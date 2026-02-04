@@ -18,6 +18,11 @@ So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Com
 -You know how Ai for some reason gives weird skin textures cause it can't create realistic lighting or skin, this is just that.
 
 
+We used datasets from these sources:
+TRAINING AND TESTING: https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images
+TRAINING: https://www.kaggle.com/datasets/kaustubhdhote/human-faces-dataset
+
+
 
 ## FUTURE PLANS 
 ## Digit and letter Recognition
