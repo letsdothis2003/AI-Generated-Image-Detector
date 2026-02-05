@@ -1,4 +1,4 @@
-#
+
 # For our SVM implementation  
 
 import numpy as np
