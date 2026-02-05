@@ -1,6 +1,4 @@
-# Fahim Tanvir and Ahmed Ali
-# CSCI-367 Term Project
-# Modified for AI-Generated Image Detection - Performance Optimized
+# AI-Generated Image Detection  
 
 import numpy as np
 from pathlib import Path
