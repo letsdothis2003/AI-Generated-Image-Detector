@@ -1,6 +1,5 @@
-# Fahim Tanvir and Ahmed Ali
-# CSCI-367 Term Project
-# Optimized with Relative Paths
+
+# Contains our paths for our data used in training
 
 import os
 from pathlib import Path
