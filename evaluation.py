@@ -1,5 +1,4 @@
-# Fahim Tanvir and Ahmed Ali
-# CSCI-367 Term Project
+
 # Evaluation logic for AI Detection (Binary Classification)
 
 import numpy as np
