@@ -1,7 +1,5 @@
-# Fahim Tanvir and Ahmed Ali
-# CSCI-367 Term Project
-# Feature extraction for HOG - Adjusted for AI Detection
 
+# Feature extraction for HOG 
 import numpy as np
 from skimage.feature import hog
 
