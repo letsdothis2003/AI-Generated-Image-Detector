@@ -12,10 +12,9 @@ So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Com
 
 ### Objectives
 - Detect faces in static images  
-- Explore real-time detection via webcam  
-- Compare different model architectures  
-- Build a unified interface supporting both digit and face detection
--You know how Ai for some reason gives weird skin textures cause it can't create realistic lighting or skin, this is just that.
+- Train model using image data from out datasets
+- Use our algorithms to compare what an AI-generated image and a real image looks like and separates  them.
+- Make sure it can accurately distinguish between the 2 through various testing. 
 
 
 We used datasets from these sources:
@@ -23,7 +22,7 @@ We used datasets from these sources:
 https://www.kaggle.com/datasets/kaustubhdhote/human-faces-dataset
 
 https://www.kaggle.com/datasets/cashbowman/ai-generated-images-vs-real-images
-
+We used 2 so we could expirement with some non-humanoid images. It is primarily meant for images of people though, atleast in this developement stage. 
 
 
 ## CURRENT AND FUTURE PLANS 
@@ -39,14 +38,4 @@ Besides that, here are some future plans:
 - Apply the same logic into videos using video frames.
 - Modify model so it looks at possible metadata of images
 
-
-
-  
-
-
-
-
-### Objectives
-- Use a non-Ai picture to assess an Ai generated one. 
-- Detects if it looks weird or uncanny. 
 
