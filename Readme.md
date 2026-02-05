@@ -2,8 +2,8 @@
 
 Developers: Fahim Tanvir and Ahmed Ali
 
-During covid, I got interested into deepfakes or images manipulated by artificial intelligence as they looked uncanny. Around fall of 2025, this interest got further developed as I learned more about digital image processing and also
-other security issues regarding ai-generated content.
+During covid, deepfakes or images manipulated by artificial intelligence became popular as they looked uncanny. Around fall of 2025, this interest got further developed as we learned more about digital image processing and also
+other security issues regarding ai-generated content(imagine the nefarious things done by GROK).
 
 ## Overview
 
@@ -19,21 +19,26 @@ So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Com
 
 
 We used datasets from these sources:
-TRAINING AND TESTING: https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images
-TRAINING: https://www.kaggle.com/datasets/kaustubhdhote/human-faces-dataset
+
+https://www.kaggle.com/datasets/kaustubhdhote/human-faces-dataset
+
+https://www.kaggle.com/datasets/cashbowman/ai-generated-images-vs-real-images
 
 
 
-## FUTURE PLANS 
-## Digit and letter Recognition
+## CURRENT AND FUTURE PLANS 
 
+Currently, we managed to get it running as it properly trains with the images as accuracy is 96%. We did do some testing here and there by inputting a random image as a test case,
+it actually can detect ai-generated images fine but it seems to fail if the image is super bright or saturated. Definetly need to iron that one out.
 
-Using an MNIST dataset, we would like to combat Google's ai for generating handwriting. 
+We would like to create a runnable version of it through applit api, and make optimizations here and there as training is very slow(thats another drawback of our program at the moment).
 
-### Objectives
-- Preprocess and normalize image data  
-- Train a neural network to classify digits  
-- Evaluate accuracy and performance until its like 90-ish percent. 
+Besides that, here are some future plans:
+-A user-friendly interface
+- After getting it successfully working on images of people or art, we move onto to text to combat Google's AI models.
+- Apply the same logic into videos using video frames.
+- Modify model so it looks at possible metadata of images
+
 
 
   
