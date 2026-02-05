@@ -21,7 +21,9 @@ We used datasets from these sources:
 
 https://www.kaggle.com/datasets/kaustubhdhote/human-faces-dataset
 
+
 https://www.kaggle.com/datasets/cashbowman/ai-generated-images-vs-real-images
+
 We used 2 so we could expirement with some non-humanoid images. It is primarily meant for images of people though, atleast in this developement stage. 
 
 
