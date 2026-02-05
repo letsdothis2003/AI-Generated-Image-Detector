@@ -1,6 +1,5 @@
-# Fahim Tanvir and Ahmed Ali
-# CSCI-367 Term Project
-# For our SVM implementation - AI Detection Optimized
+#
+# For our SVM implementation  
 
 import numpy as np
 from sklearn.decomposition import PCA
