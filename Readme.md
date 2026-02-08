@@ -1,5 +1,7 @@
 # AI Image Detector
 URL: https://ai-generated-image-detector-letsdothis2003.streamlit.app
+
+
 Developers: Fahim Tanvir and Ahmed Ali
 
 During covid, deepfakes or images manipulated by artificial intelligence became popular as they looked uncanny. Around fall of 2025, this interest got further developed as we learned more about digital image processing and also
@@ -35,7 +37,7 @@ it actually can detect ai-generated images fine but it seems to fail if the imag
 We would like to create a runnable version of it through applit api, and make optimizations here and there as training is very slow(thats another drawback of our program at the moment).
 
 Besides that, here are some future plans:
-- User-friendly interface
+- A bit more unique and user-friendly interface
 - Experiment with it so it can work with live images
 - After getting it successfully working on images of people or art, we move onto to text to combat Google's AI models.
 - Apply the same logic into videos using video frames.
