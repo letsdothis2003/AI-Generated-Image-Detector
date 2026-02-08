@@ -1,5 +1,5 @@
-# Haven't thought of a creative name for this yet! 
-
+# AI Image Detector
+URL: https://ai-generated-image-detector-letsdothis2003.streamlit.app
 Developers: Fahim Tanvir and Ahmed Ali
 
 During covid, deepfakes or images manipulated by artificial intelligence became popular as they looked uncanny. Around fall of 2025, this interest got further developed as we learned more about digital image processing and also
