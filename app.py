@@ -238,7 +238,12 @@ with tab3:
         the data down to the top {pca_comps} components. This removes noise(the grain of the image) and 
         helps the SVM find the most definitive boundary between real and fake data.
         """)
-        
+
+
+<div style="text-align: center;">
+    <a href="https://github.com/letsdothis2003/AI-Generated-Image-Detector" target="_blank">View on GitHub Repository</a>
+</div>
+
   
 
 st.divider()
