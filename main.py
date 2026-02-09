@@ -1,5 +1,3 @@
-# AI-Generated Image Detection  
-
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -43,66 +41,58 @@ def show_example_predictions(X_test, y_test, y_pred, num_examples=10, save_path=
 
 def main():
     # 1. Setup paths and Performance Parameters
-    # Paths updated to reflect your high-volume dataset structure
-    data_directory = r"C:\Users\fahim\Downloads\ai_image_detection\AI_Detection Project\Data"
+    base_dir = Path(__file__).parent
+    data_directory = base_dir / "Data"
     
-    # PERFORMANCE OPTIMIZATION: 
-    # With 160k images, memory management is key. 
-    # Reducing size to 64x64 speeds up HOG significantly.
+    # PARAMETER CONFIGURATION:
+    # Based on the technical report: 
+    # C = 5.0 and Kernel = 'rbf' yielded the 95.18% accuracy mark.
     TARGET_SIZE = (64, 64) 
     PCA_COMPONENTS = 50
+    SVM_C = 5.0
+    SVM_KERNEL = "rbf"
+    SVM_GAMMA = "scale" # Automatically calculates influence based on feature variance
     
     print(f"--- AI Image Detection System (Optimized for Large Data) ---")
     print(f"Target Directory: {data_directory}")
 
     # 2. Load the dataset 
-    # This step might still be slow due to the 160k file I/O.
+    # Reverting to the full dataset loading system (removing the 4k/1k constraints)
     X_train, y_train, X_test, y_test = load_ai_detection_dataset(data_directory, target_size=TARGET_SIZE)
 
     if X_train.size == 0 or X_test.size == 0:
-        print("Error: Could not load images. Please check your folder paths.")
+        print(f"Error: Could not load images at {data_directory}. Please ensure the 'Data' folder exists in the repo.")
         return
 
-    # PERFORMANCE OPTIMIZATION: Subsampling
-    # SVM complexity is O(n^2) to O(n^3). 
-    # 10,000 samples is the "sweet spot" for SVM training speed vs accuracy.
-    MAX_TRAIN = 10000 
-    if len(X_train) > MAX_TRAIN:
-        print(f"Subsampling training set from {len(X_train)} to {MAX_TRAIN} for speed...")
-        # Ensure we keep a balanced representation of REAL and FAKE
-        indices = np.random.choice(len(X_train), MAX_TRAIN, replace=False)
-        X_train, y_train = X_train[indices], y_train[indices]
-
-    print(f"Active Training Set: {len(X_train)} images.")
-    print(f"Active Testing Set: {len(X_test)} images.")
+    print(f"Total Training Set: {len(X_train)} images.")
+    print(f"Total Testing Set: {len(X_test)} images.")
 
     # 3. Feature Extraction
-    print(f"\nExtracting HOG features (Input Size: {TARGET_SIZE})...")
-    # Note: If this is still slow, increase pixels_per_cell in features.py
+    print(f"\nExtracting HOG + Statistical features (Input Size: {TARGET_SIZE})...")
     X_train_f = extract_features(X_train, use_extra_stats=True)
     X_test_f = extract_features(X_test, use_extra_stats=True)
     
     print(f"Feature extraction complete. Feature vector length: {X_train_f.shape[1]}")
 
-    # 4. Cross-Validation
-    # Using a Linear kernel is much faster than RBF when you have many features.
-    print("\nRunning 3-fold cross validation...")
+    # 4. Cross-Validation (5-fold as per report Table 1)
+    print(f"\nRunning 5-fold CV with Kernel: {SVM_KERNEL}, C: {SVM_C}...")
     scores, mean_acc, std_acc = k_fold_cv_scores(
         X_train_f, y_train, 
-        n_splits=3, 
+        n_splits=5, 
         pca_components=PCA_COMPONENTS, 
-        kernel="linear", 
-        C=1.0
+        kernel=SVM_KERNEL, 
+        C=SVM_C
     )
     print(f"Average CV Accuracy: {mean_acc:.4f} (+/- {std_acc:.4f})")
 
     # 5. Train Final Model
-    print("\nTraining final SVM model on the optimized subset...")
+    print(f"\nTraining final SVM model (Kernel: {SVM_KERNEL}, C: {SVM_C})...")
     model = train_final_model(
         X_train_f, y_train, 
         pca_components=PCA_COMPONENTS, 
-        kernel="linear", 
-        C=1.0
+        kernel=SVM_KERNEL, 
+        C=SVM_C,
+        gamma=SVM_GAMMA
     )
 
     # 6. Evaluation
