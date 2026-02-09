@@ -47,8 +47,8 @@ if st.session_state.trained_model is None and os.path.exists(MODEL_FILE):
 
 st.title("AI-Generated Image Detection System")
 st.markdown("""
-This system uses Histogram of Oriented Gradients (HOG) and Support Vector Machines (SVM) 
-to distinguish between authentic photography and AI-generated content.
+This system is meant
+to distinguish between authentic photography and AI-generated content. Inspired by how people be using AI to impersonate or make illegal images. 
 """)
 
 # --- Sidebar: Configuration & Training ---
