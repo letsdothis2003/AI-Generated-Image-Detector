@@ -242,7 +242,7 @@ with tab3:
     <div style="text-align: left;">
         <p>Source code and technical documentation are available on our official repository:</p>
         <a href="https://github.com/letsdothis2003/AI-Generated-Image-Detector" target="_blank">View on GitHub Repository</a>
-        <p style="font-size: 0.8em; color: gray; margin-top: 10px;">Live Sync: Active (Updates automatically on GitHub push)</p>
+        <p style="font-size: 0.8em; color: gray; margin-top: 10px;">Contains documentation and thought process that went into this</p>
     </div>
     """, unsafe_allow_html=True)
 
