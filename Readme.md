@@ -4,7 +4,7 @@ URL: https://ai-generated-image-detector-letsdothis2003.streamlit.app
 
 Developers: Fahim Tanvir and Ahmed Ali
 
-During covid, deepfakes or images manipulated by artificial intelligence became popular as they looked uncanny. Around fall of 2025, this interest got further developed as we learned more about digital image processing and also
+During 2020, deepfakes or images manipulated by artificial intelligence became popular as they looked uncanny. Around fall of 2025, this interest got further developed as we learned more about digital image processing and also
 other security issues regarding ai-generated content(imagine the nefarious things done by GROK).
 
 ## Overview
