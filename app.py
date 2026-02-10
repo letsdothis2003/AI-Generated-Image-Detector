@@ -262,12 +262,6 @@ with tab3:
          Using a high-penalty C-value ({SVM_C}), it maps non-linear artifacts into a clear 'Real' or 'Fake' classification.
         """)
 
-
-
-
-
-
-
         
         st.markdown("""
     <div style="text-align: left;">
