@@ -220,7 +220,7 @@ with tab3:
     st.header("Methodology")
     st.write("This project works using these methods")
     
-    col_a, col_b = st.columns(2)
+    col_a, col_b, col_c, col_d, col,e = st.columns(5)
     with col_a:
         st.subheader("Feature Extraction")
         st.write("""
@@ -230,7 +230,9 @@ with tab3:
         regularity or checkerboard artifacts in the gradients that are invisible 
         to the human eye but clear to HOG descriptors.
         """)
-    with col_b:
+    
+
+   with col_b:
         st.subheader("Dimension Reduction")
         st.write(f"""
         **Principal Component Analysis (PCA):**
@@ -238,6 +240,35 @@ with tab3:
         the data down to the top {pca_comps} components. This removes noise(the grain of the image) and 
         helps the SVM find the most definitive boundary between real and fake data.
         """)
+       
+    with col_c:
+        st.subheader("Texture Analysis")
+        st.info("""
+        **LBP (Local Binary Patterns):**
+        Scans pixel-level textures. AI imagery frequently has this weird smooth or uncanny texture compared to natural photographic grain. AI is very bad at generating natural skin textures. 
+        """)
+
+    with col_d:
+        st.subheader("Spatial Domain")
+        st.info("""
+        **GLCM Analysis:**
+        Examines pixel-to-pixel relationships. AI struggles to replicate the randomness of real-world light scattering captured by sensors. 
+        """)
+
+    with col_e:
+        st.subheader("Classification")
+        st.info(f"""
+        **SVM (RBF Kernel):**
+         Using a high-penalty C-value ({SVM_C}), it maps non-linear artifacts into a clear 'Real' or 'Fake' classification.
+        """)
+
+
+
+
+
+
+
+        
         st.markdown("""
     <div style="text-align: left;">
         <p>Source code and technical documentation are available on our official repository:</p>
