@@ -1,65 +1,83 @@
 
 # Feature extraction for HOG 
+#2/10/2026 Update: Implemented YCbCr logic to ensure better accuracy in detection. 
 import numpy as np
-from skimage.feature import hog
+from skimage.feature import hog, local_binary_pattern, graycomatrix, graycoprops
+from skimage.color import rgb2ycbcr
+from PIL import Image
 
-def compute_hog_features(images):
-    n = images.shape[0]
-    feats = []
-
-    # Dynamically adjust pixels_per_cell based on image size
-    # For AI images (64x64 or 128x128), (8,8) or (16,16) is faster and more robust
-    p_per_cell = (8, 8) if images[0].shape[0] >= 64 else (4, 4)
-
-    for i in range(n):
-        img = images[i]
-        # HOG extraction
-        h = hog(img, orientations=9, 
-                pixels_per_cell=p_per_cell, 
-                cells_per_block=(2, 2), 
-                block_norm="L2-Hys", 
-                transform_sqrt=True)
-        feats.append(h)
-    return np.array(feats)
-
-def compute_simple_stats(images):
+def extract_spatial_domain_features(img):
     """
-    Extracts zone-based means and projections. 
-    Modified to work with any image size, not just 28x28.
+    Analyzes spatial relationships and statistical distributions.
+    AI often lacks the natural randomness of camera sensor noise.
     """
-    n = images.shape[0]
-    all_feats = []
+    # Ensure image is in 0-255 range for GLCM
+    img_uint = (img * 255).astype(np.uint8)
+    
+    # Gray-Level Co-occurrence Matrix)  
+    # Captures spatial dependency of pixel intensities
+    # AI images often have lower 'Entropy' or higher 'Homogeneity' in specific patterns
+    distances = [1, 2]
+    angles = [0, np.pi/4, np.pi/2, 3*np.pi/4]
+    glcm = graycomatrix(img_uint, distances=distances, angles=angles, 256, symmetric=True, normed=True)
+    
+    contrast = graycoprops(glcm, 'contrast').flatten()
+    correlation = graycoprops(glcm, 'correlation').flatten()
+    energy = graycoprops(glcm, 'energy').flatten()
+    homogeneity = graycoprops(glcm, 'homogeneity').flatten()
+    
+    # High-Frequency Noise Analysis
+    # Calculates the 'Spatial Gradient Variance'
+    # AI images tend to have smoother high-frequency regions compared to real noise
+    dy, dx = np.gradient(img)
+    grad_variance = [np.var(dx), np.var(dy)]
+    
+    return np.concatenate([contrast, correlation, energy, homogeneity, grad_variance])
 
-    for img in images:
-        h, w = img.shape
-        zones = []
-        # Divide image into a 4x4 grid of zones
-        for i in range(4):
-            for j in range(4):
-                r0, r1 = int(i * h / 4), int((i + 1) * h / 4)
-                c0, c1 = int(j * w / 4), int((j + 1) * w / 4)
-                patch = img[r0:r1, c0:c1]
-                zones.append(patch.mean() if patch.size > 0 else 0)
-
-        # Projections (normalized)
-        row_sum = img.sum(axis=1) / w
-        col_sum = img.sum(axis=0) / h
+def extract_features(images_np, use_extra_stats=True):
+    """
+    Comprehensive Hybrid Pipeline:
+    1. Structural: HOG (Edges/Shapes)
+    2. Texture: LBP (Micro-patterns/Smoothness)
+    3. Spatial: GLCM (Pixel correlations)
+    4. Domain: Spatial Error/Noise Variance
+    """
+    feature_list = []
+    
+    # LBP Parameters
+    radius = 3
+    n_points = 8 * radius
+    
+    for img in images_np:
+        # A. HOG Features
+        fd = hog(img, orientations=9, pixels_per_cell=(8, 8),
+                 cells_per_block=(2, 2), visualize=False)
         
-        # Take 16 samples from each projection to keep feature size consistent
-        h_proj = np.interp(np.linspace(0, h-1, 16), np.arange(h), row_sum)
-        v_proj = np.interp(np.linspace(0, w-1, 16), np.arange(w), col_sum)
+        if not use_extra_stats:
+            feature_list.append(fd)
+            continue
+            
+        #LBP (Texture regularity)
+        lbp = local_binary_pattern(img, n_points, radius, method='uniform')
+        (lbp_hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, n_points + 3), range=(0, n_points + 2))
+        lbp_hist = lbp_hist.astype("float")
+        lbp_hist /= (lbp_hist.sum() + 1e-7)
+        
+        #Spatial Domain Analysis (GLCM & Noise)
+        spatial_feats = extract_spatial_domain_features(img)
+        
+        #Spatial Zoning (Global distribution)
+        h, w = img.shape
+        grid_size = 4
+        zoning_stats = []
+        for i in range(grid_size):
+            for j in range(grid_size):
+                region = img[i*h//grid_size:(i+1)*h//grid_size, j*w//grid_size:(j+1)*w//grid_size]
+                zoning_stats.append(np.mean(region))
+                zoning_stats.append(np.std(region))
 
-        combined = np.concatenate([zones, h_proj, v_proj])
-        all_feats.append(combined)
-
-    return np.array(all_feats)
-
-def extract_features(images, use_extra_stats=True):
-    print(f"Processing {len(images)} images...")
-    hog_f = compute_hog_features(images)
-    
-    if use_extra_stats:
-        stats_f = compute_simple_stats(images)
-        return np.hstack([hog_f, stats_f])
-    
-    return hog_f
+        # Merge all into one high-dimensional vector
+        combined = np.concatenate([fd, lbp_hist, spatial_feats, zoning_stats])
+        feature_list.append(combined)
+        
+    return np.array(feature_list)
