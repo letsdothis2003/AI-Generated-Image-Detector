@@ -233,7 +233,7 @@ with tab3:
     
     with col_a:
         st.subheader("Feature Extraction")
-        st.write("""
+        st.info("""
         **HOG:** Looks at the edges and shapes. 
         AI images often leave watermarks and regularity in gradients that are invisible to the eye but clear to HOG.
         """)
@@ -242,7 +242,7 @@ with tab3:
         st.subheader("Dimension Reduction")
         #Fetching current pca_comps from state
         current_pca = pca_comps if 'pca_comps' not in locals() else pca_comps
-        st.write(f"""
+        st.info(f"""
         **PCA:**
         The raw HOG output is huge. We use PCA to reduce data down to the top {current_pca} components. 
         This removes noise and helps the SVM find the boundary.
