@@ -17,13 +17,13 @@ from features import extract_features
 from model import MnistSvmModel
 from evaluation import evaluate_on_test
 
-# --- Page Configuration ---
-st.set_page_config(page_title="AI Image Detector", page_icon=None, layout="wide")
+# Page Configuration 
+st.set_page_config(page_title="AI Image Detector", page_icon="🤖", layout="wide")
 
 # File where the trained model will be stored
 MODEL_FILE = "ai_detection_model.joblib"
 
-# --- Session State Initialization ---
+#Session State Initialization 
 def initialize_state():
     if 'trained_model' not in st.session_state:
         st.session_state.trained_model = None
@@ -39,19 +39,25 @@ def initialize_state():
 initialize_state()
 
 # Auto-load existing model
-if st.session_state.trained_model is None and os.path.exists(MODEL_FILE):
-    try:
-        st.session_state.trained_model = joblib.load(MODEL_FILE)
-    except Exception:
-        pass
+@st.cache_resource
+def load_stored_model():
+    if os.path.exists(MODEL_FILE):
+        try:
+            return joblib.load(MODEL_FILE)
+        except Exception:
+            return None
+    return None
+
+if st.session_state.trained_model is None:
+    st.session_state.trained_model = load_stored_model()
 
 st.title("AI-Generated Image Detection System")
 st.markdown("""
-This system is meant
-to distinguish between authentic photography and AI-generated content. Inspired by how people be using AI to impersonate or make illegal images. 
+This system is meant to distinguish between authentic photography and AI-generated content. 
+Inspired by how people be using AI to impersonate or make illegal images. 
 """)
 
-# --- Sidebar: Configuration & Training ---
+#Sidebar: Configuration & Training  
 with st.sidebar:
     st.header("Model Management")
     default_path = os.path.join(os.getcwd(), "Data")
@@ -78,6 +84,7 @@ with st.sidebar:
                 progress_bar.progress(50)
                 
                 st.write("Fitting SVM Classifier...")
+                # Optimization: Note kernel is set here
                 model = MnistSvmModel(pca_components=pca_comps, kernel="linear")
                 model.fit(X_train_f, y_train)
                 joblib.dump(model, MODEL_FILE)
@@ -91,7 +98,7 @@ with st.sidebar:
                 st.session_state.target_size = target_size
                 
                 progress_bar.progress(100)
-                status.update(label="Training Complete", state="complete")
+                status.update(label=f"Training Complete! ({time.time()-start_time:.1f}s)", state="complete")
 
     st.divider()
     st.subheader("System Information")
@@ -99,7 +106,8 @@ with st.sidebar:
     if st.session_state.trained_model:
         st.text(f"Resolution: {st.session_state.target_size}x{st.session_state.target_size}")
 
-# --- Utility Functions for Main UI ---
+#Utility Functions for Main UI  
+@st.cache_data
 def get_hog_viz(image_np):
     """Generates a visualization of the HOG descriptors."""
     fd, hog_image = hog(image_np, orientations=8, pixels_per_cell=(8, 8),
@@ -107,7 +115,7 @@ def get_hog_viz(image_np):
     hog_image_rescaled = exposure.rescale_intensity(hog_image, in_range=(0, 10))
     return hog_image_rescaled
 
-# --- Main Interface ---
+#Main Interface  
 tab1, tab2, tab3 = st.tabs(["Batch Detection", "Model Performance", "Technical Analysis"])
 
 with tab1:
@@ -136,11 +144,15 @@ with tab1:
             feat = extract_features(test_arr_expanded, use_extra_stats=True)
             prediction = st.session_state.trained_model.predict(feat)[0]
             
-            # Estimate confidence using decision function if available
-            # Note: LinearSVC doesn't have predict_proba by default, so we use decision_function
+            # Estimate confidence using decision function
             try:
-                dist = st.session_state.trained_model.svm.decision_function(st.session_state.trained_model.pca.transform(st.session_state.trained_model.scaler.transform(feat)))
-                confidence = min(abs(dist[0]) * 100, 100.0) # Heuristic confidence
+                # Transformed feature for SVM
+                processed_feat = st.session_state.trained_model.pca.transform(
+                    st.session_state.trained_model.scaler.transform(feat)
+                )
+                dist = st.session_state.trained_model.svm.decision_function(processed_feat)
+                # Sigmoid-like normalization for confidence
+                confidence = 100 / (1 + np.exp(-abs(dist[0])))
             except:
                 confidence = 100.0
 
@@ -187,7 +199,6 @@ with tab2:
     if st.session_state.accuracy is not None:
         st.header("Quantitative Evaluation")
         
-        # Accuracy at the top
         m1, m2 = st.columns(2)
         accuracy_pct = st.session_state.accuracy * 100
         m1.metric("Overall System Accuracy", f"{accuracy_pct:.2f}%")
@@ -197,8 +208,6 @@ with tab2:
         
         if st.session_state.cm is not None:
             st.subheader("Confusion Matrix Analysis")
-            st.write("This matrix visualizes the relationship between the actual image labels and the model's predictions.")
-            
             fig, ax = plt.subplots(figsize=(8, 5))
             sns.heatmap(st.session_state.cm, annot=True, fmt='d', cmap='Greens', 
                         xticklabels=['REAL', 'AI'], yticklabels=['REAL', 'AI'], ax=ax)
@@ -208,10 +217,10 @@ with tab2:
             
             st.markdown("""
             **Understanding the results:**
-            - **True Positives (Bottom-Right):** AI images correctly identified as AI.
-            - **True Negatives (Top-Left):** Real photos correctly identified as Real.
-            - **False Positives (Top-Right):** Real photos mistaken for AI.
-            - **False Negatives (Bottom-Left):** AI images mistaken for Real photos.
+            - **True Positives:** AI images correctly identified as AI.
+            - **True Negatives:** Real photos correctly identified as Real.
+            - **False Positives:** Real photos mistaken for AI.
+            - **False Negatives:** AI images mistaken for Real photos.
             """)
     else:
         st.info("Performance analytics will appear here after the model has been trained.")
@@ -220,55 +229,53 @@ with tab3:
     st.header("Methodology")
     st.write("This project works using these methods")
     
-    col_a, col_b, col_c, col_d, col,e = st.columns(5)
+    col_a, col_b, col_c, col_d, col_e = st.columns(5)
+    
     with col_a:
         st.subheader("Feature Extraction")
         st.write("""
-        **Histogram of Oriented Gradients (HOG):**
-        HOG looks at the edges and shapes of the image samples.
-        AI-generated images often leave watermarks and visual distortions in the form of mathematical 
-        regularity or checkerboard artifacts in the gradients that are invisible 
-        to the human eye but clear to HOG descriptors.
+        **HOG:** Looks at the edges and shapes. 
+        AI images often leave watermarks and regularity in gradients that are invisible to the eye but clear to HOG.
         """)
-    
 
-   with col_b:
+    with col_b:
         st.subheader("Dimension Reduction")
+        #Fetching current pca_comps from state
+        current_pca = pca_comps if 'pca_comps' not in locals() else pca_comps
         st.write(f"""
-        **Principal Component Analysis (PCA):**
-        The raw HOG output is extremely big in terms of data. We use PCA to reduce 
-        the data down to the top {pca_comps} components. This removes noise(the grain of the image) and 
-        helps the SVM find the most definitive boundary between real and fake data.
+        **PCA:**
+        The raw HOG output is huge. We use PCA to reduce data down to the top {current_pca} components. 
+        This removes noise and helps the SVM find the boundary.
         """)
-       
+        
     with col_c:
         st.subheader("Texture Analysis")
         st.info("""
-        **LBP (Local Binary Patterns):**
-        Scans pixel-level textures. AI imagery frequently has this weird smooth or uncanny texture compared to natural photographic grain. AI is very bad at generating natural skin textures. 
+        **LBP:**
+        Scans pixel-level textures. AI imagery frequently has uncanny texture compared to natural photographic grain. 
         """)
 
     with col_d:
         st.subheader("Spatial Domain")
         st.info("""
         **GLCM Analysis:**
-        Examines pixel-to-pixel relationships. AI struggles to replicate the randomness of real-world light scattering captured by sensors. 
+        Examines pixel-to-pixel relationships. AI struggles to replicate real-world light scattering. 
         """)
 
     with col_e:
         st.subheader("Classification")
+        svm_c_val = locals().get('SVM_C', 1.0)
         st.info(f"""
-        **SVM (RBF Kernel):**
-         Using a high-penalty C-value ({SVM_C}), it maps non-linear artifacts into a clear 'Real' or 'Fake' classification.
+        **SVM (Linear/RBF):**
+        Using a penalty C-value ({svm_c_val}), it maps artifacts into a clear 'Real' or 'Fake' classification.
         """)
-
-        
-        st.markdown("""
+    
+    st.divider()
+    st.markdown("""
     <div style="text-align: left;">
         <p>Source code and technical documentation are available on our official repository:</p>
         <a href="https://github.com/letsdothis2003/AI-Generated-Image-Detector" target="_blank">View on GitHub Repository</a>
         <p style="font-size: 0.8em; color: gray; margin-top: 10px;">Contains documentation and thought process that went into this</p>
     </div>
     """, unsafe_allow_html=True)
-
 
