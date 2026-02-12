@@ -49,9 +49,11 @@ We are satisfied with the demo of our program. Some issues we need to work on is
 
 ## CURRENT AND FUTURE PLANS 
 - A bit more unique and user-friendly interface
+- Work with more techniques so model can work with varied methods and ideas.
+- Frequent updates to the dataset to ensure improvements in accuracy(you might expect an increase from 8000 training images and 2000 test ones to increase significantly one day). 
 - Experiment with it so it can work with live images
 - After getting it successfully working on images of people or art, we move onto to text to combat Google's AI models.
 - Apply the same logic into videos using video frames.
 - Modify model so it looks at possible metadata of images
--Frequent updates to the dataset to ensure improvements in accuracy(you might expect an increase from 8000 training images and 2000 test ones to increase significantly one day). 
+
 
