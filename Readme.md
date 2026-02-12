@@ -10,12 +10,12 @@ other security issues regarding ai-generated content(imagine the nefarious thing
 ## Overview
 
 This project explores how machine learning models learn to interpret images. The goal is to build a system that can detect and classify different types of visual data.
-So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine).
+So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine) for our initial stage. Currently, we are working towards working with YCbCr, Local Contrast Pattenrs(LCP), Gray‑Level Co‑Occurrence Matrix(GLCM) and general Spatial domain and analysis techniques. 
 
 ### Objectives
 - Detect faces in static images  
 - Train model using image data from out datasets
-- Use our algorithms to compare what an AI-generated image and a real image looks like and separates  them.
+- Use our algorithms and methods to compare what an AI-generated image and a real image looks like, separating  them afterwards.
 - Make sure it can accurately distinguish between the 2 through various testing. 
 
 
