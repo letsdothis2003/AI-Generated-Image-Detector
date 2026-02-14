@@ -1,6 +1,7 @@
 
 # Feature extraction for HOG 
-#2/10/2026 Update: Implemented YCbCr logic to ensure better accuracy in detection. 
+# 2/10/2026 Update: Implemented  LBP + GLCM Hybrid + YCbCr logic to ensure better accuracy in detection.
+
 import numpy as np
 from skimage.feature import hog, local_binary_pattern, graycomatrix, graycoprops
 from skimage.color import rgb2ycbcr
@@ -14,13 +15,16 @@ def extract_spatial_domain_features(img):
     # Ensure image is in 0-255 range for GLCM
     img_uint = (img * 255).astype(np.uint8)
     
-    # Gray-Level Co-occurrence Matrix)  
+    # Gray-Level Co-occurrence Matrix (GLCM)
     # Captures spatial dependency of pixel intensities
     # AI images often have lower 'Entropy' or higher 'Homogeneity' in specific patterns
     distances = [1, 2]
     angles = [0, np.pi/4, np.pi/2, 3*np.pi/4]
-    glcm = graycomatrix(img_uint, distances=distances, angles=angles, 256, symmetric=True, normed=True)
     
+    # Generate the GLCM
+    glcm = graycomatrix(img_uint, distances=distances, angles=angles, levels=256, symmetric=True, normed=True)
+    
+    # Extract properties
     contrast = graycoprops(glcm, 'contrast').flatten()
     correlation = graycoprops(glcm, 'correlation').flatten()
     energy = graycoprops(glcm, 'energy').flatten()
@@ -57,16 +61,17 @@ def extract_features(images_np, use_extra_stats=True):
             feature_list.append(fd)
             continue
             
-        #LBP (Texture regularity)
+        # B. LBP (Texture regularity)
         lbp = local_binary_pattern(img, n_points, radius, method='uniform')
         (lbp_hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, n_points + 3), range=(0, n_points + 2))
         lbp_hist = lbp_hist.astype("float")
         lbp_hist /= (lbp_hist.sum() + 1e-7)
         
-        #Spatial Domain Analysis (GLCM & Noise)
+        # C. Spatial Domain Analysis (GLCM & Noise)
         spatial_feats = extract_spatial_domain_features(img)
         
-        #Spatial Zoning (Global distribution)
+        # D. Spatial Zoning (Global distribution)
+        # Slices the image into a 4x4 grid and gets mean/std of each zone
         h, w = img.shape
         grid_size = 4
         zoning_stats = []
@@ -80,4 +85,5 @@ def extract_features(images_np, use_extra_stats=True):
         combined = np.concatenate([fd, lbp_hist, spatial_feats, zoning_stats])
         feature_list.append(combined)
         
+    return np.array(feature_list)
     return np.array(feature_list)
