@@ -10,7 +10,7 @@ other security issues regarding ai-generated content(imagine the nefarious thing
 ## Overview
 
 This project explores how machine learning models learn to interpret images. The goal is to build a system that can detect and classify different types of visual data.
-So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine) for our initial stage. Currently, we are working towards working with YCbCr, Local Contrast Pattenrs(LCP), Gray‑Level Co‑Occurrence Matrix(GLCM) and general Spatial domain and analysis techniques. 
+So far, we used HOG(Histogram of Oriented Gradients) Features, PCA(Principal Component Analysis) , and SVM(Support Vector Machine) for our initial stage. After we launched the Streamlit app, we are working towards working with YCbCr, Local Contrast Pattenrs(LCP), Gray‑Level Co‑Occurrence Matrix(GLCM) and general Spatial domain/analysis techniques. 
 
 ### Objectives
 - Detect faces in static images  
@@ -49,6 +49,7 @@ We are satisfied with the demo of our program. Some issues we need to work on is
 
 ## CURRENT AND FUTURE PLANS 
 - A bit more unique and user-friendly interface
+- Fix problems relating to multiple entities. 
 - Work with more techniques so model can work with varied methods and ideas.
 - Frequent updates to the dataset to ensure improvements in accuracy(you might expect an increase from 8000 training images and 2000 test ones to increase significantly one day). 
 - Experiment with it so it can work with live images
