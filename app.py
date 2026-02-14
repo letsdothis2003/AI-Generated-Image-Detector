@@ -1,3 +1,5 @@
+# Fahim Tanvir and Ahmed Ali
+# CSCI-367 Term Project
 # AI-Generated Image Detection System - Final Interactive UI
 
 import streamlit as st
@@ -14,7 +16,7 @@ import sys
 from skimage.feature import hog
 from skimage import exposure
 
-# Path Fix for Streamlit Cloud / Environments  
+# F Streamlit Cloud / Environments  
 # Ensures the current directory is in the python path so local imports work
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
@@ -22,7 +24,7 @@ if current_dir not in sys.path:
 
 # Import backend scripts with diagnostic checks
 try:
-    # Fix: Direct import of the function from the file features.py
+    #Direct import of the function from the file features.py and evaluate.py
     from features import extract_features
     from data_loader import load_ai_detection_dataset
     from model import MnistSvmModel
@@ -271,15 +273,16 @@ with tab3:
         st.subheader("Feature Extraction")
         st.info("""
         **HOG:** Looks at the edges and shapes. 
-        AI images often leave watermarks and regularity in gradients that are invisible to the eye but clear to HOG descriptors.
+        AI images often leave watermarks and regularity in gradients that are invisible to the eye but clear to HOG.
         """)
 
     with col_b:
         st.subheader("Dimension Reduction")
-        current_pca = st.session_state.trained_model.pca.n_components if st.session_state.trained_model else pca_comps
+        #Fetching current pca_comps from state
+        current_pca_val = st.session_state.trained_model.pca.n_components if st.session_state.trained_model else pca_comps
         st.info(f"""
         **PCA:**
-        The raw HOG/LBP output is huge. We use PCA to reduce data down to the top {current_pca} components. 
+        The raw HOG output is huge. We use PCA to reduce data down to the top {current_pca_val} components. 
         This removes noise and helps the SVM find the boundary.
         """)
         
@@ -287,21 +290,22 @@ with tab3:
         st.subheader("Texture Analysis")
         st.info("""
         **LBP:**
-        Scans pixel-level textures. AI imagery frequently has uncanny 'smoothness' or repetitive textures compared to natural photographic grain. 
+        Scans pixel-level textures. AI imagery frequently has uncanny texture compared to natural photographic grain. 
         """)
 
     with col_d:
         st.subheader("Spatial Domain")
         st.info("""
         **GLCM Analysis:**
-        Examines pixel-to-pixel relationships. AI struggles to replicate the stochastic randomness of real-world light scattering. 
+        Examines pixel-to-pixel relationships. AI struggles to replicate real-world light scattering. 
         """)
 
     with col_e:
         st.subheader("Classification")
-        st.info("""
-        **SVM (RBF):**
-        Using a penalty C-value (15.0), it maps non-linear artifacts into a clear 'Real' or 'Fake' classification using high-dimensional boundaries.
+        svm_c_val = 15.0 if st.session_state.trained_model else 1.0
+        st.info(f"""
+        **SVM (Linear/RBF):**
+        Using a penalty C-value ({svm_c_val}), it maps artifacts into a clear 'Real' or 'Fake' classification.
         """)
     
     st.divider()
@@ -309,7 +313,7 @@ with tab3:
     <div style="text-align: left;">
         <p>Source code and technical documentation are available on our official repository:</p>
         <a href="https://github.com/letsdothis2003/AI-Generated-Image-Detector" target="_blank">View on GitHub Repository</a>
-        <p style="font-size: 0.8em; color: gray; margin-top: 10px;">Contains documentation and thought process that went into this project.</p>
+        <p style="font-size: 0.8em; color: gray; margin-top: 10px;">Contains documentation and thought process that went into this</p>
     </div>
     """, unsafe_allow_html=True)
 
