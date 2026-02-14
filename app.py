@@ -1,10 +1,7 @@
 # AI-Generated Image Detection System - Final Interactive UI
-# AI-Generated Image Detection System - Final Interactive UI
-
 import streamlit as st
 import numpy as np
 from PIL import Image
-@@ -8,22 +10,33 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
