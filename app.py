@@ -14,20 +14,28 @@ import sys
 from skimage.feature import hog
 from skimage import exposure
 
-#For Streamlit Cloud / Environments  
+# For Streamlit Cloud / Environments 
 # Ensures the current directory is in the python path so local imports work
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-# Import backend scripts
+# Import backend scripts with diagnostic checks
 try:
+    import features
     from data_loader import load_ai_detection_dataset
-    from features import features
     from model import MnistSvmModel
     from evaluation import evaluate_on_test
+    
+    # Explicitly check for extract_features in the features module
+    if hasattr(features, 'extract_features'):
+        from features import extract_features
+    else:
+        st.error("Critical Error: 'extract_features' function not found in features.py.")
+        st.stop()
+        
 except ImportError as e:
-    st.error(f"Critical Error: Could not find required project files. {e}")
+    st.error(f"Critical Error: Could not find required project files. Please ensure 'features.py', 'data_loader.py', 'model.py', and 'evaluation.py' are in the same directory as app.py. Error details: {e}")
     st.stop()
 
 # Page Configuration 
@@ -89,12 +97,17 @@ with st.sidebar:
             X_train, y_train, X_test, y_test = load_ai_detection_dataset(data_path, target_size=(target_size, target_size))
             
             if X_train is None or X_train.size == 0:
-                st.error("Dataset not found at specified path. Please ensure 'Data' folder exists.")
+                st.error("Dataset not found at specified path. Please ensure 'Data' folder exists with train/test subfolders.")
             else:
                 progress_bar.progress(20)
                 st.write("Extracting Hybrid Features (HOG + LBP + GLCM)...")
-                X_train_f = extract_features(X_train, use_extra_stats=True)
-                X_test_f = extract_features(X_test, use_extra_stats=True)
+                try:
+                    X_train_f = extract_features(X_train, use_extra_stats=True)
+                    X_test_f = extract_features(X_test, use_extra_stats=True)
+                except Exception as e:
+                    st.error(f"Error during feature extraction: {e}")
+                    st.stop()
+                    
                 progress_bar.progress(50)
                 
                 st.write("Fitting Optimized SVM Classifier...")
@@ -147,59 +160,62 @@ with tab1:
         batch_results = []
         for i, file in enumerate(uploaded_files):
             # Load and Preprocess
-            image = Image.open(file)
-            img_format = image.format
-            img_mode = image.mode
-            img_size = image.size
-            
-            size = st.session_state.target_size
-            test_img = image.convert("L").resize((size, size), Image.Resampling.LANCZOS)
-            test_arr = np.array(test_img).astype(np.float32) / 255.0
-            test_arr_expanded = np.expand_dims(test_arr, axis=0)
-            
-            # Feature Extraction and Prediction
-            feat = extract_features(test_arr_expanded, use_extra_stats=True)
-            prediction = st.session_state.trained_model.predict(feat)[0]
-            
-            # Estimate confidence using decision function
             try:
-                processed_feat = st.session_state.trained_model.pca.transform(
-                    st.session_state.trained_model.scaler.transform(feat)
-                )
-                dist = st.session_state.trained_model.svm.decision_function(processed_feat)
-                # Sigmoid-like normalization for confidence
-                confidence = 100 / (1 + np.exp(-abs(dist[0])))
-            except:
-                confidence = 100.0
+                image = Image.open(file)
+                img_format = image.format
+                img_mode = image.mode
+                img_size = image.size
+                
+                size = st.session_state.target_size
+                test_img = image.convert("L").resize((size, size), Image.Resampling.LANCZOS)
+                test_arr = np.array(test_img).astype(np.float32) / 255.0
+                test_arr_expanded = np.expand_dims(test_arr, axis=0)
+                
+                # Feature Extraction and Prediction
+                feat = extract_features(test_arr_expanded, use_extra_stats=True)
+                prediction = st.session_state.trained_model.predict(feat)[0]
+                
+                # Estimate confidence using decision function
+                try:
+                    processed_feat = st.session_state.trained_model.pca.transform(
+                        st.session_state.trained_model.scaler.transform(feat)
+                    )
+                    dist = st.session_state.trained_model.svm.decision_function(processed_feat)
+                    # Sigmoid-like normalization for confidence
+                    confidence = 100 / (1 + np.exp(-abs(dist[0])))
+                except:
+                    confidence = 100.0
 
-            label = "AI-GENERATED" if prediction == 1 else "REAL PHOTOGRAPH"
-            batch_results.append({
-                "Filename": file.name,
-                "Prediction": label,
-                "Confidence": f"{confidence:.2f}%",
-                "Format": img_format,
-                "Dimensions": f"{img_size[0]}x{img_size[1]}"
-            })
-            
-            # UI Layout for results
-            with st.expander(f"Analysis: {file.name} - {label}"):
-                col_img, col_hog, col_meta = st.columns([2, 2, 2])
-                with col_img:
-                    st.image(image, caption="Original Subject", use_container_width=True)
-                with col_hog:
-                    st.image(get_hog_viz(test_arr), caption="Gradient Orientation Map (HOG)", use_container_width=True)
-                with col_meta:
-                    st.write("**Metadata**")
-                    st.write(f"Format: {img_format}")
-                    st.write(f"Mode: {img_mode}")
-                    st.write(f"Original: {img_size[0]}x{img_size[1]}")
-                    st.write(f"Analyzed: {size}x{size}")
-                    st.divider()
-                    if label == "AI-GENERATED":
-                        st.error(f"Classification: {label}")
-                    else:
-                        st.success(f"Classification: {label}")
-                    st.progress(confidence / 100, text=f"Confidence Score: {confidence:.1f}%")
+                label = "AI-GENERATED" if prediction == 1 else "REAL PHOTOGRAPH"
+                batch_results.append({
+                    "Filename": file.name,
+                    "Prediction": label,
+                    "Confidence": f"{confidence:.2f}%",
+                    "Format": img_format,
+                    "Dimensions": f"{img_size[0]}x{img_size[1]}"
+                })
+                
+                # UI Layout for results
+                with st.expander(f"Analysis: {file.name} - {label}"):
+                    col_img, col_hog, col_meta = st.columns([2, 2, 2])
+                    with col_img:
+                        st.image(image, caption="Original Subject", use_container_width=True)
+                    with col_hog:
+                        st.image(get_hog_viz(test_arr), caption="Gradient Orientation Map (HOG)", use_container_width=True)
+                    with col_meta:
+                        st.write("**Metadata**")
+                        st.write(f"Format: {img_format}")
+                        st.write(f"Mode: {img_mode}")
+                        st.write(f"Original: {img_size[0]}x{img_size[1]}")
+                        st.write(f"Analyzed: {size}x{size}")
+                        st.divider()
+                        if label == "AI-GENERATED":
+                            st.error(f"Classification: {label}")
+                        else:
+                            st.success(f"Classification: {label}")
+                        st.progress(confidence / 100, text=f"Confidence Score: {confidence:.1f}%")
+            except Exception as e:
+                st.error(f"Error processing {file.name}: {e}")
 
         # Summary Metrics and CSV Export
         if batch_results:
@@ -294,4 +310,5 @@ with tab3:
     """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
-    main()
+    # Ensure initialize_state is always called
+    initialize_state()
