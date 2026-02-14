@@ -1,5 +1,4 @@
 # AI-Generated Image Detection System - Final Interactive UI
-
 import streamlit as st
 import numpy as np
 from PIL import Image
@@ -14,7 +13,7 @@ import sys
 from skimage.feature import hog
 from skimage import exposure
 
-# For Streamlit Cloud / Environments 
+# --- Path Fix for Streamlit Cloud / Environments ---
 # Ensures the current directory is in the python path so local imports work
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
@@ -22,20 +21,24 @@ if current_dir not in sys.path:
 
 # Import backend scripts with diagnostic checks
 try:
-    import features
+    # Fix: Direct import of the function from the file features.py
+    from features import extract_features
     from data_loader import load_ai_detection_dataset
     from model import MnistSvmModel
     from evaluation import evaluate_on_test
-    
-    # Explicitly check for extract_features in the features module
-    if hasattr(features, 'extract_features'):
-        from features import extract_features
-    else:
-        st.error("Critical Error: 'extract_features' function not found in features.py.")
-        st.stop()
         
 except ImportError as e:
-    st.error(f"Critical Error: Could not find required project files. Please ensure 'features.py', 'data_loader.py', 'model.py', and 'evaluation.py' are in the same directory as app.py. Error details: {e}")
+    st.error(f"Critical Error: Could not find required project files.")
+    st.info(f"Details: {e}")
+    st.markdown(f"""
+    **Troubleshooting steps:**
+    1. Ensure `features.py` exists in the root directory.
+    2. Check that `features.py` contains a function named `def extract_features(...)`.
+    3. If you renamed the file to `features.py`, ensure you aren't trying to do `from features import features`.
+    """)
+    st.stop()
+except Exception as e:
+    st.error(f"An unexpected error occurred during import: {e}")
     st.stop()
 
 # Page Configuration 
