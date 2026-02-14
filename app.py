@@ -23,7 +23,7 @@ if current_dir not in sys.path:
 # Import backend scripts
 try:
     from data_loader import load_ai_detection_dataset
-    from features import extract_features
+    from features import features
     from model import MnistSvmModel
     from evaluation import evaluate_on_test
 except ImportError as e:
