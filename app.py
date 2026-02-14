@@ -43,7 +43,7 @@ except Exception as e:
     st.stop()
 
 # Page Configuration 
-st.set_page_config(page_title="AI Image Detector", page_icon="🔍", layout="wide")
+st.set_page_config(page_title="AI Image Detector", layout="wide")
 
 # File where the trained model will be stored
 MODEL_FILE = "ai_detection_model.joblib"
