@@ -1,5 +1,3 @@
-# Fahim Tanvir and Ahmed Ali
-# CSCI-367 Term Project
 # AI-Generated Image Detection System - Final Interactive UI
 
 import streamlit as st
