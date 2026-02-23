@@ -1,0 +1,36 @@
+name: Keep App Awake
+
+on:
+  schedule:
+    # This runs every 11 hours to keep the Streamlit app active
+    - cron: '0 */11 * * *'
+  workflow_dispatch: # Helps with demonstrations without having to deal with Streamlit sleeping 
+
+jobs:
+  maintenance_ping:
+    name: "Ping Streamlit Cloud Instance"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "Timestamping Request"
+        run: |
+          echo "Initiating keep-alive ping at $(date)"
+          echo "Target: https://ai-generated-image-detector-letsdothis2003.streamlit.app"
+
+      - name: "Primary Ping (Head Request)"
+        run: |
+          # Uses -I for a lightweight header-only request and -L to follow redirects
+          curl -I -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Maintenance-Bot/1.0" \
+          https://ai-generated-image-detector-letsdothis2003.streamlit.app
+
+      - name: "Secondary Ping (Wake-up Retry)"
+        run: |
+          # If the app was asleep, the first ping triggers the wake-up.
+          # We wait 15 seconds and ping again to ensure it finished loading.
+          sleep 15
+          curl -s -o /dev/null -w "Status Code: %{http_code}\n" --max-time 20 \
+          -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) App-Pinger/1.0" \
+          https://ai-generated-image-detector-letsdothis2003.streamlit.app
+          
+      - name: "Completion Summary, hoorah!"
+        run: echo "Keep-alive workflow completed successfully. The app has been poked."
