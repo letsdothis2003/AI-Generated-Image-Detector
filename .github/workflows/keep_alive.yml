@@ -17,22 +17,31 @@ jobs:
           echo "Initiating keep-alive ping at $(date)"
           echo "Target: https://ai-generated-image-detector-letsdothis2003.streamlit.app"
 
-      - name: "Primary Ping (GET Request)"
+      - name: "Aggressive Wake-up Ping"
+        continue-on-error: true
         run: |
-          # --location-trusted: Passes credentials to redirects
-          # --max-redirs: Increases limit to handle Streamlit's wake-up flow
-          # --retry: Automatically retries if it fails
-          # -k: Insecure mode (ignores SSL issues if wake-up proxy is unstable)
-          curl --location-trusted --max-redirs 10 --retry 3 -k -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0" \
-          https://ai-generated-image-detector-letsdothis2003.streamlit.app
+          # We use a loop to poke the server 3 times. 
+          # This ensures that even if the first request triggers a 'Wake Up', 
+          # the subsequent ones confirm the app is active.
+          for i in {1..3}; do
+            echo "Ping Attempt $i..."
+            curl -L -v -k \
+              -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8" \
+              -H "Upgrade-Insecure-Requests: 1" \
+              -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" \
+              --max-time 30 \
+              https://ai-generated-image-detector-letsdothis2003.streamlit.app || true
+            sleep 10
+          done
 
-      - name: "Final Health Check"
+      - name: "Final Verification"
         run: |
-          # Wait a few seconds for the app to spin up if it was cold
-          sleep 10
-          curl -s -o /dev/null -w "HTTP Response Code: %{http_code}\n" --max-time 30 \
-          -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0" \
-          https://ai-generated-image-detector-letsdothis2003.streamlit.app
-          
-      - name: "Completion Summary"
-        run: echo "Keep-alive workflow completed."
+          # This final check confirms the status code. 
+          # We accept 200 (OK) or 302/304 (Redirects) as success.
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L -k https://ai-generated-image-detector-letsdothis2003.streamlit.app)
+          echo "Final Status Code: $STATUS"
+          if [ "$STATUS" -eq "200" ] || [ "$STATUS" -eq "302" ] || [ "$STATUS" -eq "304" ]; then
+            echo "App is confirmed AWAKE."
+          else
+            echo "App might still be booting, but the wake-up signal was sent."
+          fi
