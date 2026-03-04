@@ -2,37 +2,16 @@ name: Keep App Awake
 
 on:
   schedule:
-    # This runs every 25 minutes to keep the Streamlit app active
-    - cron: '*/25 * * * *'
-  workflow_dispatch: 
+    # Runs every hour at minute 0
+    - cron: "0 * * * *"
 
 jobs:
-  maintenance_ping:
-    name: "Ping Streamlit Cloud Instance"
+  ping:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: "Timestamping Request"
-        run: |
-          echo "Initiating keep-alive ping at $(date)"
-          echo "Target: https://ai-generated-image-detector-letsdothis2003.streamlit.app"
+      - name: Ping Streamlit App
+        run: curl -s https://ai-generated-image-detector-letsdothis2003.streamlit.app > /dev/null
 
-      - name: "Aggressive Wake-up Ping"
-        continue-on-error: true
-        run: |
-          # Pings the app to ensure it stays in the Streamlit 'active' state
-          curl -L -v -k \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8" \
-            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" \
-            --max-time 30 \
-            https://ai-generated-image-detector-letsdothis2003.streamlit.app
-
-      - name: "Final Verification"
-        run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L -k https://ai-generated-image-detector-letsdothis2003.streamlit.app)
-          echo "Final Status Code: $STATUS"
-          if [[ "$STATUS" =~ ^(200|302|304)$ ]]; then
-            echo "App is confirmed AWAKE."
           else
             echo "App response code was $STATUS. Wake-up signal sent."
           fi
